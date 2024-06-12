@@ -1,8 +1,14 @@
 from typing import Iterable
 
-from english_words import get_english_words_set
+# from english_words import get_english_words_set
 
-web2lowerset = get_english_words_set(['gcide'], lower=True)
+# web2lowerset = get_english_words_set(['gcide'], lower=True)
+# read from google-10000-english-no-swears.txt
+web2lowerset = set()
+with open("google-10000-english-no-swears.txt", "r") as f:
+    for line in f:
+        word = line.strip().lower()
+        web2lowerset.add(word)
 
 while True:
     filter_ = input("Filter: ").strip().lower()
@@ -36,8 +42,9 @@ while True:
             if a != x:
                 return False
         for x in containing:
-            if x not in word:
-                return False
+            for c in x:
+                if c not in word:
+                    return False
         return True
 
     filtered_words = [word for word in web2lowerset if filter_word(word)]
