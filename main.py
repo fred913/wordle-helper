@@ -1,14 +1,14 @@
 from typing import Iterable
 
-# from english_words import get_english_words_set
+from english_words import get_english_words_set
 
-# web2lowerset = get_english_words_set(['gcide'], lower=True)
+bigwl = get_english_words_set(['gcide'], lower=True)
 # read from google-10000-english-no-swears.txt
-web2lowerset = set()
+tinywl = list()
 with open("google-10000-english-no-swears.txt", "r") as f:
     for line in f:
         word = line.strip().lower()
-        web2lowerset.add(word)
+        tinywl.append(word)
 
 while True:
     filter_ = input("Filter: ").strip().lower()
@@ -17,6 +17,12 @@ while True:
         break
 
     containing: Iterable[str] = []
+
+    allow_big_wl = False
+    if "*" in filter_:
+        allow_big_wl = True
+        filter_ = filter_.replace("*", "")
+
     if "&" in filter_:
         filter_, *containing = filter_.split("&")
 
@@ -47,7 +53,13 @@ while True:
                     return False
         return True
 
-    filtered_words = [word for word in web2lowerset if filter_word(word)]
+    filtered_words = [word for word in tinywl if filter_word(word)]
 
     for wd in filtered_words:
         print(wd)
+
+    if allow_big_wl:
+        print("Retrying with big word list...")
+        filtered_words = [word for word in bigwl if filter_word(word)]
+        for wd in filtered_words:
+            print(wd)
